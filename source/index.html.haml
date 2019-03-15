@@ -1,45 +1,261 @@
 ---
-title: Presentación
+title: Usé Custom Properties…
 layout: layout-slides
 ---
 
 %section
-  %h1 Nombre de la charla
+  %h1(style="font-size: 4em; line-height: 0.35")
+    %span(style="font-size: .8em") Usé Custom Properties
+    %br
+    %span(style="font-size: .39em") y no te creerás lo que ocurrió a continuación
+  %footer
+    Javier Usobiaga
+    %br
+    javier@swwweet.com @htmlboy
 %section
-  %h2 Titular de slide
-  %p
-    Programamos comportamientos: ˝cuando se hace click aquí, ocurre algo˝.
+  %div
+    %img.clean(src="images/Swwweet-logo.svg" alt="Swwweet")
+  %a(href="https://swwweet.com" target="_blank") Swwweet.com
 %section
-  %h2 Objetivos
-  %ul
-    %li acceder al contenido de una web
-    %li modificar el contenido de una web
-    %li programar reglas
-    %li reaccionar a eventos
+  %img(src="images/meme-talk.jpg")
+  %p.note Thanks for coming to my Ted Talk.
 %section
-  %h2 Ejemplo
-  %p
-    ˝Si yo hago click…˝
-  %p
-    ˝en un elemento que tenga la clase 'elemento'…˝
-  %p
-    ˝…quita o ponle la clase 'activo' ˝
+  %h2
+    Di una charla de 20 minutos
+    %br
+    sobre dos líneas de código
+  %p (gracias a este ingenioso truco)
 %section
-  .codepen(data-height="500" data-theme-id="0" data-slug-hash="JLRqbJ" data-default-tab="js,result" data-user="htmlboy" data-embed-version="2")
-
+  %p Las llamadas “variables de CSS” ya están bien soportadas en los navegadores modernos.
+  %p.fragment Bueno, pero… ya tenemos Sass, ¿no?
 %section
-  %p
-    Para usar JavaScript, necesitamos vincular un archivo con la extensión .js al final de nuestro HTML.
+  %p Técnicamente, la primera variable de CSS es currentColor.
   %pre
     %code
       :preserve
-          &lt;script src="comportamiento.js"&gt;&lt;/script&gt;
-        &lt;/body&gt;
+        body { color: #444; }
+
+        p { color: currentColor; }
+
+        .ejemplo {
+          box-shadow: 2px 2px 3px currentColor;
+          background-image: linear-gradient(currentColor, transparent);
+        }
+  %p Más sobre esto: https://theblog.adobe.com/extending-the-color-cascade-with-the-css-currentcolor-variable
+
 %section
-  .codepen(data-height="500" data-theme-id="0" data-slug-hash="MVbeMX" data-default-tab="js,result" data-user="htmlboy" data-embed-version="2")
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="xBYjOR" data-default-tab="css,result" data-user="htmlboy" data-embed-version="2")
+
 %section
-  %img.clean(src="images/demo-img.png" alt="")
-  %p
-    jQuery es un conjunto de funciones prefabricadas para que nos sea más fácil escribir y aprender JavaScript.
-  %p
-    Es como aprender a andar en bicicleta con ruedecitas.
+  %h2 ¿Es demasiado tarde para las variables CSS?
+  %p.fragment No.
+%section
+  %h2 Ventajas de las variables nativas
+  %ul
+    %li.fragment Se pueden cambiar dinámicamente
+    %li.fragment Responden al contexto del DOM
+    %li.fragment Pueden ser leídas y cambiadas por JS
+%section
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="EMQRgE" data-default-tab="css,result" data-user="htmlboy" data-embed-version="2")
+
+
+%section
+  %p Las custom properties solo son propiedades.
+  %pre
+    %code
+      :preserve
+        /*No puedes declararlas fuera de las {…} */
+        --screen-M: 600px;
+
+        /* Y tampoco las puedes usar como media queries */
+        @media(min-width: var(--screen-M)) {
+          .ejemplo {
+            width: 50%;
+          }
+        }
+  %p.note Nice try.
+
+%section
+  %p Se pueden declarar una como valor de otra.
+  %pre
+    %code
+      :preserve
+        :root{
+          --primario: lightblue;
+          --sizeh1: 30px;
+        }
+
+        .principal {
+          --fontColor: var(--primario);
+          --fontSize: var(--sizeh1);
+        }
+
+%section
+  %p Pero no se pueden hacer dependencias recursivas.
+  %pre
+    %code
+      :preserve
+        html {
+          --foo: var(--bar);
+          --bar: var(--foo);
+        }
+  %p.note Cómo tener a Javier entretenido durante media hora.
+
+%section
+  %p Se puede establecer un valor de fallback.
+  %pre
+    %code
+      :preserve
+        .ejemplo {
+          font-size: var(--mainSize, 16px);
+        }
+  %p Este valor se utilizará si la variable no está definida.
+  %p.note.fragment Y por supuesto, este fallback puede ser otra variable.
+
+%section
+  %p No podemos combinar directamente una variable con una unidad.
+  %pre
+    %code
+      :preserve
+        .foo {
+          --spacer: 20;
+          margin-bottom: var(--spacer)px);
+        }
+  %p.note No funciona porque añade un espacio entre la cifra y la unidad.
+
+%section
+  %p Pero se puede combinar con un calc()
+  %pre
+    %code
+      :preserve
+        .foo {
+          --spacer: 20;
+          margin-bottom: calc(var(--spacer) * 1px);
+        }
+  %p.note +"px" no funcionaría por que también añade un espacio.
+
+%section
+  %h3 Pueden ayudar a simplificar el código
+  %pre
+    %code
+      :preserve
+        .alert {
+          --theme: #ccc;
+          --darkTheme: #777;
+          --icon: '';
+          background: var(--theme);
+          border: 1px solid var(--darkTheme);
+          &:before {
+            background-image: var(--icon);
+          }
+        }
+        .alert--success {
+          --theme: #f0f9ef;
+          --darkTheme: #7ebb7a;
+          --icon: url(../img/success.svg);
+        }
+  %p.note
+    %a(href="https://css-tricks.com/do-css-custom-properties-beat-sass-loops/" target="_blank") css-tricks.com/do-css-custom-properties-beat-sass-loops
+%section
+  %pre
+    %code
+      :preserve
+        :root:lang(en) {--external-link: "external link";}
+        :root:lang(es) {--external-link: "enlace externo";}
+
+        a[href^="http"]::after {content: " (" var(--external-link) ")"}
+
+  %p.note Otro ejemplo práctico, en el que hacemos depender el contenido generado de una variable.
+%section
+  %div(style="overflow:scroll; resize:horizontal")
+    .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="GeQeKZ" data-default-tab="result" data-user="htmlboy" data-embed-version="2")
+
+%section
+  %div(style="overflow:scroll; resize:horizontal")
+    .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="PLRKWe" data-default-tab="result" data-user="htmlboy" data-embed-version="2")
+  %p.note Esta charla no va de CSS Grid, pero Grid es ❤️
+
+%section
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="aMYKNL" data-default-tab="css,result" data-user="htmlboy" data-embed-version="2")
+
+%section
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="ZLYqyr" data-default-tab="css,result" data-user="g12n" data-embed-version="2")
+  %p.note
+    Custom Properties, SVG y :hover por
+    %a(href="https://codepen.io/g12n/") Michael Gehrmann
+%section
+  %h3 Cambiar Custom Properties con JS
+  %pre
+    %code
+      :preserve
+        element.style.setProperty('--color', 'red');
+%section
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="BMbRqv" data-default-tab="result" data-user="Mamboleoo" data-embed-version="2")
+  %p.note
+    Unicorn trail, por
+    %a(href="https://codepen.io/Mamboleoo/") Louis Hoebregts
+
+%section
+  %img(src="images/basic-scroll.png" alt="Librería BasicScroll")
+  %a(href="https://basicscroll.electerious.com/" target="_blank") basicscroll.electerious.com
+
+%section
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="QGNxxx" data-default-tab="result" data-user="electerious" data-embed-version="2")
+
+%section
+  .codepen(data-height="650" data-editable="true" data-theme-id="0" data-slug-hash="gLLozQ" data-default-tab="result" data-user="electerious" data-embed-version="2")
+
+%section
+  %h2 ¿Cuándo usarlas?
+  %blockquote “If It Changes, It’s A Variable”
+  %p.note
+    %a(href="https://www.smashingmagazine.com/2018/05/css-custom-properties-strategy-guide/" target="_blank") smashingmagazine.com/2018/05/css-custom-properties-strategy-guide
+
+%section
+  %h2 Performance
+  %ul
+    %li.fragment Las variables se heredan y un cambio de valor en un nodo puede afectar a los descendientes
+    %li.fragment calc() funciona bien con las variables, pero obviamente ralentiza ligeramente los cálculos
+    %li.fragment Si cambiamos variables con JS, es preferible usar setProperty que un directamente style inline
+    %li.fragment Las Custom Properties pueden ser una herramienta más eficiente que otras para efectos de scroll
+  %p.note
+    Más información:
+    %a(href="https://blog.jiayihu.net/css-custom-properties-performance-in-2018/" target="_blank") blog.jiayihu.net/css-custom-properties-performance-in-2018
+%section
+  %h2 Recursos adicionales
+  %p.note
+    Post de introducción en Smashing Magazine:
+    %br
+    %a(href="https://www.smashingmagazine.com/2017/04/start-using-css-custom-properties/" target="_blank") smashingmagazine.com/2017/04/start-using-css-custom-properties
+  %p.note
+    Ejemplo de retícula flexbox con Custom Properties:
+    %br
+    %a(href="https://googlechrome.github.io/samples/css-custom-properties/" target="_blank") googlechrome.github.io/samples/css-custom-properties
+  %p.note
+    Jesús Olazagoitia en FrontFest 2019:
+    %br
+    %a(href="https://www.youtube.com/watch?v=NroY5YLLcVY" target="_blank") youtube.com/watch?v=NroY5YLLcVY
+
+%section
+  %h2 Conclusiones
+  %ul
+    %li.fragment
+      %p Las Custom Properties abren la puerta a cambios fuertes en la arquitectura de la CSS.
+    %li.fragment
+      %p El layout y la forma en que que hacemos adaptaciones responsive va a cambiar radicalmente.
+    %li.fragment
+      %p Bien usadas, pueden ser una gran mejora de performance en muchos casos actuales.
+    %li.fragment
+      %p El preprocesado de CSS no va a desparacer, pero se transformará.
+
+%section
+  %h3 One more thing…
+  %img(style="width: 10em" src="images/tweet-css-nesting.png" alt="The CSS Working Group approved CSS Nesting — which now has early Working Draft in Stage 1.")
+  %p.fragment Bueno, pero… ya tenemos Sass, ¿no?
+
+%section
+  %h2 ¡Muchas gracias!
+  .fragment
+    %p ¿Preguntas?
+    %p Presentación: bit.ly/slidesFSV
+

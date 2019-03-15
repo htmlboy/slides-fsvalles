@@ -4,4 +4,20 @@
     border: 0;
     box-shadow: none;
   }
+  .progress {
+    color: rgba(white,.2);
+  }
+  pre code {
+    padding: 0.5em;
+  }
+
+  .note {
+    font-size: 0.6em;
+  }
+
+  .cp_embed_wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
