@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Usé Custom Properties…</title>
+
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" href="revealjs/css/reveal.css">
+  <link rel="stylesheet" href="revealjs/css/theme/moon.css">
+  <link href="stylesheets/slides.css" rel="stylesheet" />
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="revealjs/lib/css/zenburn.css">
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'revealjs/css/print/pdf.css' :
+      'revealjs/css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
+</head>
+
+  <body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+<h1 style='font-size: 4em; line-height: 0.35'>
+<span style='font-size: .8em'>Usé Custom Properties</span>
+<br>
+<span style='font-size: .39em'>y no te creerás lo que ocurrió a continuación</span>
+</h1>
+<footer class='note' style='display: flex; margin: 30px 55px 0 0; justify-content: flex-end;'>
+<span style='margin-right: 20px;'>
+Javier Usobiaga
+</span>
+<a href='https://twitter.com/htmlboy' target='_blank'>
+@htmlboy
+</a>
+</footer>
+</section>
+<section>
+<div>
+<img alt='Swwweet' class='clean' src='images/Swwweet-logo.svg'>
+</div>
+<a class='note' href='https://swwweet.com' target='_blank'>Swwweet.com</a>
+</section>
+<section>
+<img alt='Lisa Simpson reduciendo mi charla a dos líneas de código' src='images/meme-talk.jpg'>
+<p class='note' lang='en'>Thanks for coming to my TED Talk.</p>
+</section>
+<section>
+<h2>
+Di una charla de 20 minutos
+<br>
+sobre dos líneas de código
+</h2>
+<p>(gracias a este ingenioso truco)</p>
+</section>
+<section>
+<p>Las llamadas “variables de CSS” ya están bien soportadas en los navegadores modernos.</p>
+<p class='fragment'>Bueno, pero… ya tenemos Sass, ¿no?</p>
+</section>
+<section>
+<h3>¿Es demasiado tarde para las variables CSS?</h3>
+<p class='fragment'>No.</p>
+</section>
+<section>
+<h3>Ventajas de las variables nativas</h3>
+<ul>
+<li class='fragment'>Se pueden cambiar dinámicamente</li>
+<li class='fragment'>Responden al contexto del DOM</li>
+<li class='fragment'>Pueden ser leídas y cambiadas por JS</li>
+</ul>
+</section>
+<section>
+<h3>Un apunte…</h3>
+<p>
+Técnicamente, la primera variable de CSS
+<br>
+es currentColor.
+</p>
+<pre><code>body { color: #444; }&#x000A;&#x000A;p { color: currentColor; }&#x000A;&#x000A;.ejemplo {&#x000A;  box-shadow: 2px 2px 3px currentColor;&#x000A;  background-image: linear-gradient(currentColor, transparent);&#x000A;}</code></pre>
+<p class='note'>
+<a href='https://theblog.adobe.com/extending-the-color-cascade-with-the-css-currentcolor-variable'>theblog.adobe.com/extending-the-color-cascade-with-the-css-currentcolor-variable</a>
+</p>
+</section>
+<section>
+<h2>Sintaxis</h2>
+</section>
+<section>
+<div class='codepen' data-default-tab='css,result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='xBYjOR' data-theme-id='0' data-user='htmlboy'></div>
+</section>
+<section>
+<div class='codepen' data-default-tab='css,result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='EMQRgE' data-theme-id='0' data-user='htmlboy'></div>
+</section>
+<section>
+<p>Las custom properties solo son propiedades.</p>
+<pre><code>/*No puedes declararlas fuera de las {…} */&#x000A;--screen-M: 600px;&#x000A;&#x000A;/* Y tampoco las puedes usar como media queries */&#x000A;@media(min-width: var(--screen-M)) {&#x000A;  .ejemplo {&#x000A;    width: 50%;&#x000A;  }&#x000A;}</code></pre>
+<p class='note'>Nice try.</p>
+</section>
+<section>
+<p>Se pueden declarar una como valor de otra.</p>
+<pre><code>:root{&#x000A;  --primario: lightblue;&#x000A;  --sizeh1: 30px;&#x000A;}&#x000A;&#x000A;.principal {&#x000A;  --fontColor: var(--primario);&#x000A;  --fontSize: var(--sizeh1);&#x000A;}&#x000A;</code></pre>
+</section>
+<section>
+<p>Pero no se pueden hacer dependencias recursivas.</p>
+<pre><code>html {&#x000A;  --foo: var(--bar);&#x000A;  --bar: var(--foo);&#x000A;}</code></pre>
+<p class='note'>Cómo tener a Javier entretenido durante media hora.</p>
+</section>
+<section>
+<p>Se puede establecer un valor de fallback.</p>
+<pre><code>.ejemplo {&#x000A;  font-size: var(--mainSize, 16px);&#x000A;º}</code></pre>
+<p class='note'>Este valor se utilizará si la variable no está definida.</p>
+</section>
+<section>
+<p>Y por supuesto, este fallback puede ser otra variable.</p>
+<pre><code>.ejemplo {&#x000A;  font-size: var(--mainSize, var(--sizeh1, 16px));&#x000A;}</code></pre>
+<p class='note'>Y el fallback de la variable de fallback podría ser otra variable y…</p>
+</section>
+<section>
+<p>No podemos combinar directamente una variable con una unidad.</p>
+<pre><code>.foo {&#x000A;  --spacer: 20;&#x000A;  margin-bottom: var(--spacer)px);&#x000A;}</code></pre>
+<p class='note'>No funciona porque añade un espacio entre la cifra y la unidad.</p>
+</section>
+<section>
+<p>Pero se puede combinar con un calc()</p>
+<pre><code>.foo {&#x000A;  --spacer: 20;&#x000A;  margin-bottom: calc(var(--spacer) * 1px);&#x000A;}</code></pre>
+<p class='note'>+"px" no funcionaría por que también añade un espacio.</p>
+</section>
+<section>
+<h2>Casos de uso: CSS y SVG</h2>
+</section>
+<section>
+<h3>Pueden ayudar a simplificar el código</h3>
+<pre><code>.alert {&#x000A;  --theme: #ccc;&#x000A;  --darkTheme: #777;&#x000A;  --icon: '';&#x000A;  background: var(--theme);&#x000A;  border: 1px solid var(--darkTheme);&#x000A;  &:before {&#x000A;    background-image: var(--icon);&#x000A;  }&#x000A;}&#x000A;.alert--success {&#x000A;  --theme: #f0f9ef;&#x000A;  --darkTheme: #7ebb7a;&#x000A;  --icon: url(../img/success.svg);&#x000A;}</code></pre>
+<p class='note'>
+<a href='https://css-tricks.com/do-css-custom-properties-beat-sass-loops/' target='_blank'>css-tricks.com/do-css-custom-properties-beat-sass-loops</a>
+</p>
+</section>
+<section>
+<pre><code>:root:lang(en) {--external-link: "external link";}&#x000A;:root:lang(es) {--external-link: "enlace externo";}&#x000A;&#x000A;a[href^="http"]::after {content: " (" var(--external-link) ")"}&#x000A;</code></pre>
+<p class='note'>Otro ejemplo práctico, en el que hacemos depender el contenido generado de una variable.</p>
+</section>
+<section>
+<div style='overflow:scroll; resize:horizontal'>
+<div class='codepen' data-default-tab='result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='GeQeKZ' data-theme-id='0' data-user='htmlboy'></div>
+</div>
+</section>
+<section>
+<div style='overflow:scroll; resize:horizontal'>
+<div class='codepen' data-default-tab='result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='PLRKWe' data-theme-id='0' data-user='htmlboy'></div>
+</div>
+<p class='note'>Esta charla no va de CSS Grid, pero Grid es ❤️</p>
+</section>
+<section>
+<div class='codepen' data-default-tab='css,result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='aMYKNL' data-theme-id='0' data-user='htmlboy'></div>
+</section>
+<section>
+<div class='codepen' data-default-tab='css,result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='ZLYqyr' data-theme-id='0' data-user='g12n'></div>
+<p class='note'>
+Custom Properties, SVG y :hover por
+<a href='https://codepen.io/g12n/'>Michael Gehrmann</a>
+</p>
+</section>
+<section>
+<h2>Casos de uso: JS</h2>
+</section>
+<section>
+<h3>Cambiar Custom Properties con JS</h3>
+<pre><code>element.style.setProperty('--color', 'red');</code></pre>
+</section>
+<section>
+<div class='codepen' data-default-tab='result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='BMbRqv' data-theme-id='0' data-user='Mamboleoo'></div>
+<p class='note'>
+Unicorn trail, por
+<a href='https://codepen.io/Mamboleoo/'>Louis Hoebregts</a>
+</p>
+</section>
+<section>
+<img alt='Librería BasicScroll' src='images/basic-scroll.jpg'>
+<a class='note' href='https://basicscroll.electerious.com/' target='_blank'>basicscroll.electerious.com</a>
+</section>
+<section>
+<div class='codepen' data-default-tab='result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='QGNxxx' data-theme-id='0' data-user='electerious'></div>
+</section>
+<section>
+<div class='codepen' data-default-tab='result' data-editable='true' data-embed-version='2' data-height='600' data-slug-hash='gLLozQ' data-theme-id='0' data-user='electerious'></div>
+</section>
+<section>
+<h2>¿Cuándo usarlas?</h2>
+<blockquote>“If It Changes, It’s A Variable”</blockquote>
+<p class='note'>
+<a href='https://www.smashingmagazine.com/2018/05/css-custom-properties-strategy-guide/' target='_blank'>smashingmagazine.com/2018/05/css-custom-properties-strategy-guide</a>
+</p>
+</section>
+<section>
+<h2>Performance</h2>
+<ul>
+<li class='fragment'>Las variables se heredan y un cambio de valor en un nodo puede afectar a los descendientes</li>
+<li class='fragment'>calc() funciona bien con las variables, pero obviamente ralentiza ligeramente los cálculos</li>
+<li class='fragment'>Si cambiamos variables con JS, es preferible usar setProperty que directamente un style inline</li>
+<li class='fragment'>Las Custom Properties pueden ser una herramienta más eficiente que otras para efectos de scroll</li>
+</ul>
+<p class='note'>
+Más información:
+<a href='https://blog.jiayihu.net/css-custom-properties-performance-in-2018/' target='_blank'>blog.jiayihu.net/css-custom-properties-performance-in-2018</a>
+</p>
+</section>
+<section>
+<h2>Recursos adicionales</h2>
+<p class='note'>
+Post de introducción en Smashing Magazine:
+<br>
+<a href='https://www.smashingmagazine.com/2017/04/start-using-css-custom-properties/' target='_blank'>smashingmagazine.com/2017/04/start-using-css-custom-properties</a>
+</p>
+<p class='note'>
+Ejemplo de retícula flexbox con Custom Properties:
+<br>
+<a href='https://googlechrome.github.io/samples/css-custom-properties/' target='_blank'>googlechrome.github.io/samples/css-custom-properties</a>
+</p>
+<p class='note'>
+Jesús Olazagoitia en FrontFest 2019:
+<br>
+<a href='https://www.youtube.com/watch?v=NroY5YLLcVY' target='_blank'>youtube.com/watch?v=NroY5YLLcVY</a>
+</p>
+</section>
+<section>
+<h2>Conclusiones</h2>
+<ul>
+<li class='fragment'>
+<p>Las Custom Properties abren la puerta a cambios fuertes en la arquitectura de la CSS.</p>
+</li>
+<li class='fragment'>
+<p>El layout y la forma en que que hacemos adaptaciones responsive va a cambiar radicalmente.</p>
+</li>
+<li class='fragment'>
+<p>Bien usadas, pueden ser una gran mejora de performance en muchos casos actuales.</p>
+</li>
+<li class='fragment'>
+<p>El preprocesado de CSS no va a desparacer, pero se transformará.</p>
+</li>
+</ul>
+</section>
+<section>
+<h3>One more thing…</h3>
+<img alt='The CSS Working Group approved CSS Nesting — which now has early Working Draft in Stage 1.' src='images/tweet-css-nesting.jpg' style='width: 10em'>
+<p class='fragment'>Bueno, pero… ya tenemos Sass, ¿no?</p>
+</section>
+<section>
+<h2>¡Muchas gracias!</h2>
+<div class='fragment'>
+<p>¿Preguntas?</p>
+<p class='note'>
+Presentación:
+<a href='https://bit.ly/slidesFSV'>bit.ly/slidesFSV</a>
+</p>
+<footer class='note' style='display: flex; margin: 90px 55px 0 0; justify-content: flex-end;'>
+<span style='margin-right: 20px;'>
+Javier Usobiaga
+</span>
+<a href='https://twitter.com/htmlboy' target='_blank'>
+@htmlboy
+</a>
+</footer>
+</div>
+</section>
+
+    </div>
+  </div>
+
+  <script src="revealjs/lib/js/head.min.js"></script>
+  <script src="revealjs/js/reveal.js"></script>
+
+  <script>
+    // More info about config & dependencies:
+    // - https://github.com/hakimel/reveal.js#configuration
+    // - https://github.com/hakimel/reveal.js#dependencies
+    Reveal.initialize({
+      controls: false,
+      transition: 'none',
+      dependencies: [{
+          src: 'revealjs/plugin/markdown/marked.js'
+        },
+        {
+          src: 'revealjs/plugin/markdown/markdown.js'
+        },
+        {
+          src: 'revealjs/plugin/notes/notes.js',
+          async: true
+        },
+        {
+          src: 'revealjs/plugin/highlight/highlight.js',
+          async: true,
+          callback: function () {
+            hljs.initHighlightingOnLoad();
+          }
+        }
+      ]
+    });
+  </script>
+  <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+</body>
+
+</html>
